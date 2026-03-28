@@ -1,57 +1,47 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { ThemeProvider } from '@/store/theme-context';
+import { initAudio } from '@/lib/audio';
+import { initPurchases } from '@/lib/purchases';
+import { usePremiumStore } from '@/store/premium-store';
+import { useSoundStore } from '@/store/sound-store';
+import { useFavoritesStore } from '@/store/favorites-store';
 
-import { useColorScheme } from '@/components/useColorScheme';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+function AppInitializer({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    (async () => {
+      try {
+        await initAudio();
+        await initPurchases();
+        await usePremiumStore.getState().loadStatus();
+        usePremiumStore.getState().startListening();
+        await useSoundStore.getState().loadFromStorage();
+        await useFavoritesStore.getState().loadFavorites();
+      } catch (e) {
+        console.warn('Init error:', e);
+      } finally {
+        await SplashScreen.hideAsync();
+      }
+    })();
+  }, []);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
+  return <>{children}</>;
 }
 
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
+export default function RootLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+    <ThemeProvider>
+      <AppInitializer>
+        <StatusBar style="light" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </AppInitializer>
     </ThemeProvider>
   );
 }
