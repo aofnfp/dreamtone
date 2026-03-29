@@ -25,7 +25,7 @@ async function setJSON(key: string, value: unknown): Promise<void> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.warn('Storage write failed:', e);
+    if (__DEV__) console.warn('Storage write failed:', e);
   }
 }
 

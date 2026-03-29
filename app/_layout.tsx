@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from '@/store/theme-context';
 import { initAudio } from '@/lib/audio';
 import { initPurchases } from '@/lib/purchases';
+import { requestTrackingPermission } from '@/lib/tracking';
 import { usePremiumStore } from '@/store/premium-store';
 import { useSoundStore } from '@/store/sound-store';
 import { useFavoritesStore } from '@/store/favorites-store';
@@ -15,6 +16,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
+        await requestTrackingPermission();
         await initAudio();
         await initPurchases();
         await usePremiumStore.getState().loadStatus();
@@ -22,7 +24,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
         await useSoundStore.getState().loadFromStorage();
         await useFavoritesStore.getState().loadFavorites();
       } catch (e) {
-        console.warn('Init error:', e);
+        if (__DEV__) console.warn('Init error:', e);
       } finally {
         await SplashScreen.hideAsync();
       }

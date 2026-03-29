@@ -15,7 +15,7 @@ async function loadPurchases() {
     const mod = require('react-native-purchases');
     Purchases = mod.default || mod;
   } catch (e) {
-    console.warn('RevenueCat not available:', e);
+    if (__DEV__) console.warn('RevenueCat not available:', e);
   }
 }
 
@@ -27,7 +27,7 @@ export async function initPurchases(): Promise<void> {
     const apiKey = Platform.OS === 'ios' ? REVENUECAT_IOS_KEY : REVENUECAT_ANDROID_KEY;
     await Purchases.configure({ apiKey });
   } catch (e) {
-    console.warn('Failed to configure RevenueCat:', e);
+    if (__DEV__) console.warn('Failed to configure RevenueCat:', e);
   }
 }
 
@@ -36,8 +36,7 @@ export async function checkPremiumStatus(): Promise<boolean> {
   try {
     const info = await Purchases.getCustomerInfo();
     return info.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  } catch (e) {
-    console.warn('Failed to check premium status:', e);
+  } catch {
     return false;
   }
 }
@@ -50,8 +49,7 @@ export async function purchaseMonthly(): Promise<boolean> {
     if (!monthly) return false;
     const { customerInfo } = await Purchases.purchasePackage(monthly);
     return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  } catch (e) {
-    console.warn('Monthly purchase failed:', e);
+  } catch {
     return false;
   }
 }
@@ -64,8 +62,7 @@ export async function purchaseAnnual(): Promise<boolean> {
     if (!annual) return false;
     const { customerInfo } = await Purchases.purchasePackage(annual);
     return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  } catch (e) {
-    console.warn('Annual purchase failed:', e);
+  } catch {
     return false;
   }
 }
@@ -75,8 +72,7 @@ export async function restorePurchases(): Promise<boolean> {
   try {
     const info = await Purchases.restorePurchases();
     return info.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  } catch (e) {
-    console.warn('Restore purchases failed:', e);
+  } catch {
     return false;
   }
 }
@@ -86,6 +82,6 @@ export function addPurchaseListener(callback: (info: any) => void): void {
   try {
     Purchases.addCustomerInfoUpdateListener(callback);
   } catch (e) {
-    console.warn('Failed to add purchase listener:', e);
+    if (__DEV__) console.warn('Failed to add purchase listener:', e);
   }
 }

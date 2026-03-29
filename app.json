@@ -16,7 +16,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "org.aofnfp.dreamtone",
       "infoPlist": {
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": ["audio"],
+        "SKAdNetworkItems": [
+          { "SKAdNetworkIdentifier": "cstr6suwn9.skadnetwork" }
+        ],
+        "NSUserTrackingUsageDescription": "This helps us show relevant ads and support the free version of DreamTone."
       }
     },
     "android": {
@@ -24,7 +28,10 @@
       "adaptiveIcon": {
         "backgroundColor": "#0A0E1A",
         "foregroundImage": "./assets/images/icon.png"
-      }
+      },
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +40,9 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-tracking-transparency"
+      ],
       [
         "react-native-google-mobile-ads",
         {
@@ -43,6 +53,18 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
+      }
+    },
+    "owner": "aofnfp",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/REPLACE_WITH_EAS_PROJECT_ID"
     }
   }
 }

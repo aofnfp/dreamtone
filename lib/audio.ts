@@ -26,7 +26,7 @@ export async function playSound(soundId: string, source: string, volume: number 
     );
     activeSounds.set(soundId, sound);
   } catch (e) {
-    console.warn(`Failed to play sound ${soundId}:`, e);
+    if (__DEV__) console.warn(`Failed to play sound ${soundId}:`, e);
   }
 }
 
@@ -37,7 +37,7 @@ export async function stopSound(soundId: string): Promise<void> {
       await sound.stopAsync();
       await sound.unloadAsync();
     } catch (e) {
-      console.warn(`Failed to stop sound ${soundId}:`, e);
+      if (__DEV__) console.warn(`Failed to stop sound ${soundId}:`, e);
     }
     activeSounds.delete(soundId);
   }
@@ -49,7 +49,7 @@ export async function setVolume(soundId: string, volume: number): Promise<void> 
     try {
       await sound.setVolumeAsync(Math.max(0, Math.min(1, volume)));
     } catch (e) {
-      console.warn(`Failed to set volume for ${soundId}:`, e);
+      if (__DEV__) console.warn(`Failed to set volume for ${soundId}:`, e);
     }
   }
 }
