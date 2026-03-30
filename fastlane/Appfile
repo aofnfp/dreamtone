@@ -1,5 +1,7 @@
-app_identifier("org.aofnfp.dreamtone")
+# Bundle ID updated to match Developer Portal registration (com.aofnfp.dreamtone)
+# NOTE: app.config.ts still uses org.aofnfp.dreamtone — Engineer must update it
+app_identifier("com.aofnfp.dreamtone")
 apple_id("abrahamoladotun@icloud.com")
 
-# team_id: Set via APP_STORE_CONNECT_TEAM_ID env var or after running 'fastlane produce'
+# team_id: Set via APP_STORE_CONNECT_TEAM_ID env var
 # itc_team_id: Set via ITUNES_CONNECT_TEAM_ID env var

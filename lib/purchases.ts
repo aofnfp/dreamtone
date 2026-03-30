@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 
-const REVENUECAT_IOS_KEY = 'appl_REPLACE_WITH_REAL_KEY';
-const REVENUECAT_ANDROID_KEY = 'goog_REPLACE_WITH_REAL_KEY';
+const REVENUECAT_IOS_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY ?? '';
+const REVENUECAT_ANDROID_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY ?? '';
 
 export const ENTITLEMENT_ID = 'premium';
 export const MONTHLY_PRODUCT_ID = 'dreamtone_premium_monthly';
@@ -25,6 +25,7 @@ export async function initPurchases(): Promise<void> {
 
   try {
     const apiKey = Platform.OS === 'ios' ? REVENUECAT_IOS_KEY : REVENUECAT_ANDROID_KEY;
+    if (!apiKey) return;
     await Purchases.configure({ apiKey });
   } catch (e) {
     if (__DEV__) console.warn('Failed to configure RevenueCat:', e);

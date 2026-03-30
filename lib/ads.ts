@@ -1,38 +1,66 @@
 import { Platform } from 'react-native';
+import {
+  InterstitialAd,
+  AdEventType,
+  TestIds,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
 
-let BannerAd: any = null;
-let BannerAdSize: any = null;
-let TestIds: any = null;
+const INTERSTITIAL_ID = Platform.select({
+  ios: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL || TestIds.INTERSTITIAL,
+  android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL || TestIds.INTERSTITIAL,
+  default: TestIds.INTERSTITIAL,
+});
 
-// Lazy load to avoid crashes on web
-async function loadAdMob() {
+export const BANNER_ID = Platform.select({
+  ios: process.env.EXPO_PUBLIC_ADMOB_IOS_BANNER || TestIds.ADAPTIVE_BANNER,
+  android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_BANNER || TestIds.ADAPTIVE_BANNER,
+  default: TestIds.ADAPTIVE_BANNER,
+});
+
+let interstitial: InterstitialAd | null = null;
+let isInterstitialLoaded = false;
+
+function createInterstitial() {
+  if (Platform.OS === 'web' || !INTERSTITIAL_ID) return;
+
+  interstitial = InterstitialAd.createForAdRequest(INTERSTITIAL_ID, {
+    requestNonPersonalizedAdsOnly: true,
+  });
+
+  interstitial.addAdEventListener(AdEventType.LOADED, () => {
+    isInterstitialLoaded = true;
+  });
+
+  interstitial.addAdEventListener(AdEventType.CLOSED, () => {
+    isInterstitialLoaded = false;
+    preloadInterstitial();
+  });
+
+  interstitial.addAdEventListener(AdEventType.ERROR, () => {
+    isInterstitialLoaded = false;
+  });
+}
+
+export function preloadInterstitial(): void {
   if (Platform.OS === 'web') return;
+  if (!interstitial) createInterstitial();
+  interstitial?.load();
+}
+
+export async function showInterstitial(): Promise<boolean> {
+  if (!isInterstitialLoaded || !interstitial) return false;
   try {
-    const admob = require('react-native-google-mobile-ads');
-    BannerAd = admob.BannerAd;
-    BannerAdSize = admob.BannerAdSize;
-    TestIds = admob.TestIds;
-  } catch (e) {
-    if (__DEV__) console.warn('AdMob not available:', e);
+    await interstitial.show();
+    isInterstitialLoaded = false;
+    return true;
+  } catch {
+    return false;
   }
 }
 
-// Production ad unit IDs — replace with real IDs from AdMob console
-const PRODUCTION_BANNER_IDS = {
-  ios: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
-  android: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
-};
+export function isInterstitialReady(): boolean {
+  return isInterstitialLoaded;
+}
 
-// Test IDs for development
-const TEST_BANNER_IDS = {
-  ios: 'ca-app-pub-3940256099942544/2435281174',
-  android: 'ca-app-pub-3940256099942544/6300978111',
-};
-
-export const BANNER_ID = Platform.select({
-  ios: __DEV__ ? TEST_BANNER_IDS.ios : PRODUCTION_BANNER_IDS.ios,
-  android: __DEV__ ? TEST_BANNER_IDS.android : PRODUCTION_BANNER_IDS.android,
-  default: undefined,
-});
-
-export { BannerAd, BannerAdSize, TestIds, loadAdMob };
+export { BannerAdSize };
