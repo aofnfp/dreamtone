@@ -1,0 +1,11 @@
+DreamTone is a beautiful sleep sounds app with a curated collection of ambient audio to help you relax and sleep better. Mix multiple sounds, set sleep timers, and drift off effortlessly.
+
+Features:
+• 20+ high-quality ambient sounds (rain, ocean, forest, white noise, and more)
+• Mix and layer multiple sounds simultaneously
+• Customizable sleep timer
+• Volume control per sound
+• Premium content available
+• Offline playback — no internet required
+
+Built by the Abraham Oladotun Foundation NFP.
