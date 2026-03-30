@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.aofnfp.dreamtone",
+      "bundleIdentifier": "com.aofnfp.dreamtone",
       "infoPlist": {
         "UIBackgroundModes": ["audio"],
         "SKAdNetworkItems": [
@@ -24,7 +24,7 @@
       }
     },
     "android": {
-      "package": "org.aofnfp.dreamtone",
+      "package": "com.aofnfp.dreamtone",
       "adaptiveIcon": {
         "backgroundColor": "#0A0E1A",
         "foregroundImage": "./assets/images/icon.png"
