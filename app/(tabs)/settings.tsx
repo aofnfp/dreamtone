@@ -38,6 +38,7 @@ export default function SettingsScreen() {
     aboutText: { fontSize: 13, color: colors.textMuted, lineHeight: 20, marginTop: 8 },
     link: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
     linkText: { fontSize: 14, color: colors.primary },
+    brandingText: { fontSize: 11, color: colors.textMuted, textAlign: 'center', marginTop: 24 },
   }), [colors]);
 
   return (
@@ -110,6 +111,8 @@ export default function SettingsScreen() {
             <ExternalLink size={14} color={colors.primary} />
           </TouchableOpacity>
         </View>
+
+        <Text style={styles.brandingText}>App by aoftech</Text>
       </ScrollView>
       <Paywall visible={showPaywall} onClose={() => setShowPaywall(false)} />
     </SafeAreaView>
